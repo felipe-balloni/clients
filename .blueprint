@@ -1,0 +1,29 @@
+created:
+    - database/factories/ClientFactory.php
+    - database/factories/ProfessionalFactory.php
+    - database/factories/ServiceFactory.php
+    - database/factories/ProfessionalServiceFactory.php
+    - database/factories/AppointmentFactory.php
+    - database/factories/AppointmentProfessionalServiceFactory.php
+    - database/migrations/2024_10_29_124704_create_clients_table.php
+    - database/migrations/2024_10_29_124705_create_professionals_table.php
+    - database/migrations/2024_10_29_124706_create_services_table.php
+    - database/migrations/2024_10_29_124707_create_professional_services_table.php
+    - database/migrations/2024_10_29_124708_create_appointments_table.php
+    - database/migrations/2024_10_29_124709_create_appointment_professional_services_table.php
+    - app/Models/Client.php
+    - app/Models/Professional.php
+    - app/Models/Service.php
+    - app/Models/ProfessionalService.php
+    - app/Models/Appointment.php
+    - app/Models/AppointmentProfessionalService.php
+    - database/seeders/ServiceSeeder.php
+    - database/seeders/ProfessionalSeeder.php
+models:
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string nullable' }
+    Client: { cpf: 'string:11 unique', phone: 'string:14', timestamps: timestamps, softDeletes: false, relationships: { hasMany: Appointment, morphOne: User } }
+    Professional: { extension: string, thumb: string, timestamps: timestamps, softDeletes: false, relationships: { hasMany: 'Service:&ProfessionalService, Appointment', morphOne: User } }
+    Service: { name: string, description: string, timestamps: timestamps, softDeletes: false, relationships: { belongsToMany: 'Professional:&ProfessionalService' } }
+    ProfessionalService: { professional_id: 'id foreign:professional.id', service_id: 'id foreign:service.id', price: 'decimal:7,2', duration: integer, timestamps: timestamps, softDeletes: false }
+    Appointment: { client_id: 'id foreign:client.id', professional_id: 'id foreign:professional.id', status: string, notes: text, total: 'decimal:7,2', booked_at: dateTime, timestamps: timestamps, softDeletes: false, relationships: { belongsTo: 'Client, Professional', belongsToMany: 'ProfessionalService:&AppointmentProfessionalService' } }
+    AppointmentProfessionalService: { appointment_id: 'id foreign:appointment.id', professional_service_id: 'id foreign:professionalService.id', price: 'decimal:7,2', service_data: json, timestamps: false, softDeletes: false }

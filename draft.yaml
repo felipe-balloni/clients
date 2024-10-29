@@ -1,0 +1,57 @@
+models:
+  Client:
+    cpf: string:11 unique
+    phone: string:14
+    timestamps: true
+    softDeletes: false
+    relationships:
+      hasMany: Appointment
+      morphOne: User
+
+  Professional:
+    extension: string
+    thumb: string
+    timestamps: true
+    softDeletes: false
+    relationships:
+      hasMany: Service:&ProfessionalService, Appointment
+      morphOne: User
+
+  Service:
+    name: string
+    description: string
+    timestamps: true
+    softDeletes: false
+    relationships:
+      belongsToMany: Professional:&ProfessionalService
+
+  ProfessionalService:
+    professional_id: id foreign:professional.id
+    service_id: id foreign:service.id
+    price: decimal:7,2
+    duration: integer
+    timestamps: true
+    softDeletes: false
+
+  Appointment:
+    client_id: id foreign:client.id
+    professional_id: id foreign:professional.id
+    status: string
+    notes: text
+    total: decimal:7,2
+    booked_at: dateTime
+    timestamps: true
+    softDeletes: false
+    relationships:
+      belongsTo: Client, Professional
+      belongsToMany: ProfessionalService:&AppointmentProfessionalService
+
+  AppointmentProfessionalService:
+    appointment_id: id foreign:appointment.id
+    professional_service_id: id foreign:professionalService.id
+    price: decimal:7,2
+    service_data: json
+    timestamps: false
+    softDeletes: false
+
+seeders: Service, Professional
